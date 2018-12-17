@@ -25,6 +25,11 @@ variable "parent_zone_name" {
   description = "Name of the hosted zone to contain this record (or specify `parent_zone_id`)"
 }
 
+variable "parent_zone_provider" {
+  default     = "aws"
+  description = "Provider to use for the parent zone"
+}
+
 variable "delimiter" {
   type        = "string"
   default     = "-"
