@@ -38,13 +38,13 @@ resource "null_resource" "parent" {
 data "aws_route53_zone" "parent_by_zone_id" {
   count    = "${var.enabled == "true" ? signum(length(var.parent_zone_id)) : 0}"
   zone_id  = "${var.parent_zone_id}"
-  provider = "aws.${var.parent_zone_provider}"
+  provider = "${var.parent_zone_provider}"
 }
 
 data "aws_route53_zone" "parent_by_zone_name" {
   count    = "${var.enabled == "true" ? signum(length(var.parent_zone_name)) : 0}"
   name     = "${var.parent_zone_name}"
-  provider = "aws.${var.parent_zone_provider}"
+  provider = "${var.parent_zone_provider}"
 }
 
 resource "aws_route53_zone" "default" {
@@ -59,7 +59,7 @@ resource "aws_route53_record" "ns" {
   name     = "${join("", aws_route53_zone.default.*.name)}"
   type     = "NS"
   ttl      = "60"
-  provider = "aws.${var.parent_zone_provider}"
+  provider = "${var.parent_zone_provider}"
 
   records = [
     "${aws_route53_zone.default.name_servers.0}",
