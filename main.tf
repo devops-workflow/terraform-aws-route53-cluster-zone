@@ -1,3 +1,7 @@
+provider "aws" {
+  alias = "parent_zone"
+}
+
 module "label" {
   source     = "git::https://github.com/cloudposse/terraform-null-label.git?ref=tags/0.3.3"
   namespace  = "${var.namespace}"
@@ -38,13 +42,13 @@ resource "null_resource" "parent" {
 data "aws_route53_zone" "parent_by_zone_id" {
   count    = "${var.enabled == "true" ? signum(length(var.parent_zone_id)) : 0}"
   zone_id  = "${var.parent_zone_id}"
-  provider = "parent_zone"
+  provider = "aws.parent_zone"
 }
 
 data "aws_route53_zone" "parent_by_zone_name" {
   count    = "${var.enabled == "true" ? signum(length(var.parent_zone_name)) : 0}"
   name     = "${var.parent_zone_name}"
-  provider = "parent_zone"
+  provider = "aws.parent_zone"
 }
 
 resource "aws_route53_zone" "default" {
@@ -59,7 +63,7 @@ resource "aws_route53_record" "ns" {
   name     = "${join("", aws_route53_zone.default.*.name)}"
   type     = "NS"
   ttl      = "60"
-  provider = "parent_zone"
+  provider = "aws.parent_zone"
 
   records = [
     "${aws_route53_zone.default.name_servers.0}",
